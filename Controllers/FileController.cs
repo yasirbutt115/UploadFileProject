@@ -21,13 +21,14 @@ namespace UploadFileProject.Controllers
        // [HttpPost("uploadFile")]
         public async Task<IActionResult> UploadFile( IFormFile file)
         {
-            string filePath = @"D:\Learning\Projects\UploadFileProject\FileStorage";
-            if (string.IsNullOrEmpty(filePath) || file == null || file.Length <= 0)
-            {
-                return BadRequest("Invalid File or path");
+            string filePath = "FileStorage";
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+            if (!Directory.Exists(folderPath)) { 
+                 Directory.CreateDirectory(folderPath);
             }
+         
 
-            await _fileStorageService.UploadingFile(filePath, file);
+            await _fileStorageService.UploadingFile(folderPath, file);
 
             return Ok("File Uploaded Successfully");
 
@@ -36,8 +37,11 @@ namespace UploadFileProject.Controllers
         [HttpGet("download/{fileName}")]
         public async Task<IActionResult> DownloadFile( string fileName)
         {
-            string filePath = @"D:\Learning\Projects\UploadFileProject\FileStorage";
-            var fileBytes = await _fileStorageService.DownloadingFile(filePath, fileName);
+           
+            string filePath = "FileStorage";
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+
+            var fileBytes = await _fileStorageService.DownloadingFile(folderPath, fileName);
 
             if (fileBytes == null || fileBytes.Length == 0)
             {
